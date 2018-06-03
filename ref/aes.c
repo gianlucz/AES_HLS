@@ -15,10 +15,10 @@ unsigned char get_rcon(unsigned char round) {
 *Each of the bytes of the word w is used as lookup in the aes sbox
 */
 void substw(unsigned int * w) {
-  BYTE(*w)[0] = EncSbox[BYTE(*w)[0]];
-  BYTE(*w)[1] = EncSbox[BYTE(*w)[1]];
-  BYTE(*w)[2] = EncSbox[BYTE(*w)[2]];
-  BYTE(*w)[3] = EncSbox[BYTE(*w)[3]];
+  BYTES(*w)[0] = EncSbox[BYTES(*w)[0]];
+  BYTES(*w)[1] = EncSbox[BYTES(*w)[1]];
+  BYTES(*w)[2] = EncSbox[BYTES(*w)[2]];
+  BYTES(*w)[3] = EncSbox[BYTES(*w)[3]];
 }
 
 
@@ -138,10 +138,10 @@ void addroundkey(unsigned int * key, unsigned int * block) {
 unsigned int mixw(unsigned int w) {
   unsigned int res;
 
-  BYTE(res)[0] = GM2(BYTE(w)[0]) ^ GM3(BYTE(w)[1]) ^ BYTE(w)[2]      ^ BYTE(w)[3];
-  BYTE(res)[1] = BYTE(w)[0]      ^ GM2(BYTE(w)[1]) ^ GM3(BYTE(w)[2]) ^ BYTE(w)[3];
-  BYTE(res)[2] = BYTE(w)[0]      ^ BYTE(w)[1]      ^ GM2(BYTE(w)[2]) ^ GM3(BYTE(w)[3]);
-  BYTE(res)[3] = GM3(BYTE(w)[0]) ^ BYTE(w)[1]      ^ BYTE(w)[2]      ^ GM2(BYTE(w)[3]);
+  BYTES(res)[0] = GM2(BYTES(w)[0]) ^ GM3(BYTES(w)[1]) ^ BYTES(w)[2]      ^ BYTES(w)[3];
+  BYTES(res)[1] = BYTES(w)[0]      ^ GM2(BYTES(w)[1]) ^ GM3(BYTES(w)[2]) ^ BYTES(w)[3];
+  BYTES(res)[2] = BYTES(w)[0]      ^ BYTES(w)[1]      ^ GM2(BYTES(w)[2]) ^ GM3(BYTES(w)[3]);
+  BYTES(res)[3] = GM3(BYTES(w)[0]) ^ BYTES(w)[1]      ^ BYTES(w)[2]      ^ GM2(BYTES(w)[3]);
 
   return res;
 }
@@ -161,10 +161,10 @@ void mixcolumns(unsigned int * block) {
 */
 void subbytes(unsigned int * block) {
   for (unsigned char i = 0; i < 4; i++) {
-    BYTE(block[i])[0] = EncSbox[ BYTE(block[i])[0] ];
-    BYTE(block[i])[1] = EncSbox[ BYTE(block[i])[1] ];
-    BYTE(block[i])[2] = EncSbox[ BYTE(block[i])[2] ];
-    BYTE(block[i])[3] = EncSbox[ BYTE(block[i])[3] ];
+    BYTES(block[i])[0] = EncSbox[ BYTES(block[i])[0] ];
+    BYTES(block[i])[1] = EncSbox[ BYTES(block[i])[1] ];
+    BYTES(block[i])[2] = EncSbox[ BYTES(block[i])[2] ];
+    BYTES(block[i])[3] = EncSbox[ BYTES(block[i])[3] ];
   }
 }
 
@@ -172,25 +172,25 @@ void subbytes(unsigned int * block) {
 * Perform AES ShiftRows on the given block
 */
 void shiftrows(unsigned int * block, unsigned int * res_block) {
-  BYTE(res_block[0])[0] = BYTE(block[0])[0];
-  BYTE(res_block[0])[1] = BYTE(block[1])[1];
-  BYTE(res_block[0])[2] = BYTE(block[2])[2];
-  BYTE(res_block[0])[3] = BYTE(block[3])[3];
+  BYTES(res_block[0])[0] = BYTES(block[0])[0];
+  BYTES(res_block[0])[1] = BYTES(block[1])[1];
+  BYTES(res_block[0])[2] = BYTES(block[2])[2];
+  BYTES(res_block[0])[3] = BYTES(block[3])[3];
 
-  BYTE(res_block[1])[0] = BYTE(block[1])[0];
-  BYTE(res_block[1])[1] = BYTE(block[2])[1];
-  BYTE(res_block[1])[2] = BYTE(block[3])[2];
-  BYTE(res_block[1])[3] = BYTE(block[0])[3];
+  BYTES(res_block[1])[0] = BYTES(block[1])[0];
+  BYTES(res_block[1])[1] = BYTES(block[2])[1];
+  BYTES(res_block[1])[2] = BYTES(block[3])[2];
+  BYTES(res_block[1])[3] = BYTES(block[0])[3];
 
-  BYTE(res_block[2])[0] = BYTE(block[2])[0];
-  BYTE(res_block[2])[1] = BYTE(block[3])[1];
-  BYTE(res_block[2])[2] = BYTE(block[0])[2];
-  BYTE(res_block[2])[3] = BYTE(block[1])[3];
+  BYTES(res_block[2])[0] = BYTES(block[2])[0];
+  BYTES(res_block[2])[1] = BYTES(block[3])[1];
+  BYTES(res_block[2])[2] = BYTES(block[0])[2];
+  BYTES(res_block[2])[3] = BYTES(block[1])[3];
 
-  BYTE(res_block[3])[0] = BYTE(block[3])[0];
-  BYTE(res_block[3])[1] = BYTE(block[0])[1];
-  BYTE(res_block[3])[2] = BYTE(block[1])[2];
-  BYTE(res_block[3])[3] = BYTE(block[2])[3];
+  BYTES(res_block[3])[0] = BYTES(block[3])[0];
+  BYTES(res_block[3])[1] = BYTES(block[0])[1];
+  BYTES(res_block[3])[2] = BYTES(block[1])[2];
+  BYTES(res_block[3])[3] = BYTES(block[2])[3];
 }
 
 
@@ -254,10 +254,10 @@ void aes_encipher_block(int key_len, unsigned int * key, unsigned int * block) {
 unsigned int inv_mixw(unsigned int w) {
   unsigned int res;
 
-  BYTE(res)[0] = GM14(BYTE(w)[0]) ^ GM11(BYTE(w)[1]) ^ GM13(BYTE(w)[2]) ^ GM9(BYTE(w)[3]);
-  BYTE(res)[1] = GM9(BYTE(w)[0])  ^ GM14(BYTE(w)[1]) ^ GM11(BYTE(w)[2]) ^ GM13(BYTE(w)[3]);
-  BYTE(res)[2] = GM13(BYTE(w)[0]) ^ GM9(BYTE(w)[1])  ^ GM14(BYTE(w)[2]) ^ GM11(BYTE(w)[3]);
-  BYTE(res)[3] = GM11(BYTE(w)[0]) ^ GM13(BYTE(w)[1]) ^ GM9(BYTE(w)[2])  ^ GM14(BYTE(w)[3]);
+  BYTES(res)[0] = GM14(BYTES(w)[0]) ^ GM11(BYTES(w)[1]) ^ GM13(BYTES(w)[2]) ^ GM9(BYTES(w)[3]);
+  BYTES(res)[1] = GM9(BYTES(w)[0])  ^ GM14(BYTES(w)[1]) ^ GM11(BYTES(w)[2]) ^ GM13(BYTES(w)[3]);
+  BYTES(res)[2] = GM13(BYTES(w)[0]) ^ GM9(BYTES(w)[1])  ^ GM14(BYTES(w)[2]) ^ GM11(BYTES(w)[3]);
+  BYTES(res)[3] = GM11(BYTES(w)[0]) ^ GM13(BYTES(w)[1]) ^ GM9(BYTES(w)[2])  ^ GM14(BYTES(w)[3]);
 
   return res;
 }
@@ -277,10 +277,10 @@ void inv_mixcolumns(unsigned int * block) {
 */
 void inv_subbytes(unsigned int * block) {
   for (unsigned char i = 0; i < 4; i++) {
-    BYTE(block[i])[0] = DecSbox[ BYTE(block[i])[0] ];
-    BYTE(block[i])[1] = DecSbox[ BYTE(block[i])[1] ];
-    BYTE(block[i])[2] = DecSbox[ BYTE(block[i])[2] ];
-    BYTE(block[i])[3] = DecSbox[ BYTE(block[i])[3] ];
+    BYTES(block[i])[0] = DecSbox[ BYTES(block[i])[0] ];
+    BYTES(block[i])[1] = DecSbox[ BYTES(block[i])[1] ];
+    BYTES(block[i])[2] = DecSbox[ BYTES(block[i])[2] ];
+    BYTES(block[i])[3] = DecSbox[ BYTES(block[i])[3] ];
   }
 }
 
@@ -288,25 +288,25 @@ void inv_subbytes(unsigned int * block) {
 * Perform AES ShiftRows on the given block
 */
 void inv_shiftrows(unsigned int * block, unsigned int * res_block) {
-  BYTE(res_block[0])[0] = BYTE(block[0])[0];
-  BYTE(res_block[0])[1] = BYTE(block[3])[1];
-  BYTE(res_block[0])[2] = BYTE(block[2])[2];
-  BYTE(res_block[0])[3] = BYTE(block[1])[3];
+  BYTES(res_block[0])[0] = BYTES(block[0])[0];
+  BYTES(res_block[0])[1] = BYTES(block[3])[1];
+  BYTES(res_block[0])[2] = BYTES(block[2])[2];
+  BYTES(res_block[0])[3] = BYTES(block[1])[3];
 
-  BYTE(res_block[1])[0] = BYTE(block[1])[0];
-  BYTE(res_block[1])[1] = BYTE(block[0])[1];
-  BYTE(res_block[1])[2] = BYTE(block[3])[2];
-  BYTE(res_block[1])[3] = BYTE(block[2])[3];
+  BYTES(res_block[1])[0] = BYTES(block[1])[0];
+  BYTES(res_block[1])[1] = BYTES(block[0])[1];
+  BYTES(res_block[1])[2] = BYTES(block[3])[2];
+  BYTES(res_block[1])[3] = BYTES(block[2])[3];
 
-  BYTE(res_block[2])[0] = BYTE(block[2])[0];
-  BYTE(res_block[2])[1] = BYTE(block[1])[1];
-  BYTE(res_block[2])[2] = BYTE(block[0])[2];
-  BYTE(res_block[2])[3] = BYTE(block[3])[3];
+  BYTES(res_block[2])[0] = BYTES(block[2])[0];
+  BYTES(res_block[2])[1] = BYTES(block[1])[1];
+  BYTES(res_block[2])[2] = BYTES(block[0])[2];
+  BYTES(res_block[2])[3] = BYTES(block[3])[3];
 
-  BYTE(res_block[3])[0] = BYTE(block[3])[0];
-  BYTE(res_block[3])[1] = BYTE(block[2])[1];
-  BYTE(res_block[3])[2] = BYTE(block[1])[2];
-  BYTE(res_block[3])[3] = BYTE(block[0])[3];
+  BYTES(res_block[3])[0] = BYTES(block[3])[0];
+  BYTES(res_block[3])[1] = BYTES(block[2])[1];
+  BYTES(res_block[3])[2] = BYTES(block[1])[2];
+  BYTES(res_block[3])[3] = BYTES(block[0])[3];
 }
 
 
