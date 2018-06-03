@@ -4,3 +4,5 @@ Project milestones:
 - Make the reference C code compatile ewith HLS synthesizer
 - Implement HLS-specific optimizations
 - Evaluate performances
+
+Based on https://github.com/secworks/aes implementation.
