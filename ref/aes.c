@@ -378,15 +378,25 @@ int main() {
   unsigned int key128[4] = { 0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c };
   unsigned int key256[8] = { 0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781,
                              0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4 };
-  unsigned int block[4]; // warning: not initialized, contains stack garbage
+
+  unsigned int block[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 }; // warning: not initialized, contains stack garbage
+
 
   printf("Block contents: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
   aes_encipher_block(AES_128, key128, block);
-  printf("AES-128 result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  printf("AES-128 enc result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+
+
+  aes_decipher_block(AES_128, key128, block);
+  printf("AES-128 dec result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
   aes_encipher_block(AES_256, key256, block);
-  printf("AES-256 result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  printf("AES-256 enc result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+
+
+  aes_decipher_block(AES_256, key256, block);
+  printf("AES-256 dec result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
   return 0;
 }

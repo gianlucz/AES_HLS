@@ -5,4 +5,4 @@ Project milestones:
 - Implement HLS-specific optimizations
 - Evaluate performances
 
-Based on https://github.com/secworks/aes implementation.
+Reference AES code inspired by: https://github.com/secworks/aes.
