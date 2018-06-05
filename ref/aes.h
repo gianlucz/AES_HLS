@@ -9,8 +9,8 @@
 */
 #define GM2(b) (((b << 1) ^ (0x1b & ((b >> 7) * 0xff))) & 0xff)
 #define GM3(b) (GM2(b) ^ b)
-#define GM4(b) (GM2(GM2(b)) ^ b)
-#define GM8(b) (GM2(GM4(b)) ^ b)
+#define GM4(b) (GM2(GM2(b)))
+#define GM8(b) (GM2(GM4(b)))
 #define GM9(b) (GM8(b) ^ b)
 #define GM11(b) (GM8(b) ^ GM2(b) ^ b)
 #define GM13(b) (GM8(b) ^ GM4(b) ^ b)
