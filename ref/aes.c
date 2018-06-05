@@ -329,8 +329,6 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   inv_shiftrows(block, tmp_block);
   inv_subbytes(tmp_block);
 
-  printf("Round_key[%x]: %x %x %x %x\n", round_keys_num, round_keys[round_keys_num][0],
-  round_keys[round_keys_num][1],round_keys[round_keys_num][2],round_keys[round_keys_num][3]);
 
   round_keys_num = round_keys_num - 1;
   // printf("Round[%i]: %x %x %x %x\n", 0, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
@@ -342,19 +340,11 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
     inv_shiftrows(tmp_block,block);
     inv_subbytes(block);
 
-     printf("Round_key[%x]: %x %x %x %x\n", round_keys_num, round_keys[round_keys_num][0],
- round_keys[round_keys_num][1],round_keys[round_keys_num][2],round_keys[round_keys_num][3]);
 
     addroundkey(round_keys[round_keys_num - 1],block);
     inv_mixcolumns(block);
     inv_shiftrows(block,tmp_block);
     inv_subbytes(tmp_block);
-
-
-    printf("Round_key[%x]: %x %x %x %x\n", (round_keys_num -1), round_keys[round_keys_num - 1][0],
-round_keys[round_keys_num - 1][1],round_keys[round_keys_num - 1][2],
-round_keys[round_keys_num - 1][3]);
-
 
     round_keys_num = round_keys_num - 2;
   }
@@ -365,15 +355,10 @@ round_keys[round_keys_num - 1][3]);
   inv_shiftrows(tmp_block,block);
   inv_subbytes(block);
 
-  printf("Round_key[%x]: %x %x %x %x\n", round_keys_num, round_keys[round_keys_num][0],
-  round_keys[round_keys_num][1],round_keys[round_keys_num][2],round_keys[round_keys_num][3]);
-
   // printf("Round[%i]: %x %x %x %x\n", round_loops, block[0], block[1], block[2], block[3]);
 
   //Last add key
   addroundkey(round_keys[0], block);
-  printf("Round_key[%x]: %x %x %x %x\n", (round_keys_num -1) , round_keys[0][0],
-  round_keys[0][1],round_keys[0][2],round_keys[0][3]);
 
   // printf("Round[%i]: %x %x %x %x\n", round_loops+1, block[0], block[1], block[2], block[3]);
 }
