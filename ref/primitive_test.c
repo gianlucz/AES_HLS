@@ -138,10 +138,10 @@ void addroundkey(unsigned int * key, unsigned int * block) {
 unsigned int mixw(unsigned int w) {
   unsigned int res;
 
-  BYTES(res)[0] = GM2(BYTES(w)[0]) ^ GM3(BYTES(w)[1]) ^ BYTES(w)[2]      ^ BYTES(w)[3];
-  BYTES(res)[1] = BYTES(w)[0]      ^ GM2(BYTES(w)[1]) ^ GM3(BYTES(w)[2]) ^ BYTES(w)[3];
-  BYTES(res)[2] = BYTES(w)[0]      ^ BYTES(w)[1]      ^ GM2(BYTES(w)[2]) ^ GM3(BYTES(w)[3]);
-  BYTES(res)[3] = GM3(BYTES(w)[0]) ^ BYTES(w)[1]      ^ BYTES(w)[2]      ^ GM2(BYTES(w)[3]);
+  BYTES(res)[3] = GM2(BYTES(w)[3]) ^ GM3(BYTES(w)[2]) ^ BYTES(w)[1]      ^ BYTES(w)[0];
+  BYTES(res)[2] = BYTES(w)[3]      ^ GM2(BYTES(w)[2]) ^ GM3(BYTES(w)[1]) ^ BYTES(w)[0];
+  BYTES(res)[1] = BYTES(w)[3]      ^ BYTES(w)[2]      ^ GM2(BYTES(w)[1]) ^ GM3(BYTES(w)[0]);
+  BYTES(res)[0] = GM3(BYTES(w)[3]) ^ BYTES(w)[2]      ^ BYTES(w)[1]      ^ GM2(BYTES(w)[0]);
 
   return res;
 }
@@ -172,25 +172,28 @@ void subbytes(unsigned int * block) {
 * Perform AES ShiftRows on the given block
 */
 void shiftrows(unsigned int * block, unsigned int * res_block) {
-  BYTES(res_block[0])[0] = BYTES(block[0])[0];
-  BYTES(res_block[0])[1] = BYTES(block[1])[1];
-  BYTES(res_block[0])[2] = BYTES(block[2])[2];
-  BYTES(res_block[0])[3] = BYTES(block[3])[3];
 
-  BYTES(res_block[1])[0] = BYTES(block[1])[0];
-  BYTES(res_block[1])[1] = BYTES(block[2])[1];
-  BYTES(res_block[1])[2] = BYTES(block[3])[2];
-  BYTES(res_block[1])[3] = BYTES(block[0])[3];
+    BYTES(res_block[0])[0] = BYTES(block[3])[0];
+    BYTES(res_block[0])[1] = BYTES(block[2])[1];
+    BYTES(res_block[0])[2] = BYTES(block[1])[2];
+    BYTES(res_block[0])[3] = BYTES(block[0])[3];
 
-  BYTES(res_block[2])[0] = BYTES(block[2])[0];
-  BYTES(res_block[2])[1] = BYTES(block[3])[1];
-  BYTES(res_block[2])[2] = BYTES(block[0])[2];
-  BYTES(res_block[2])[3] = BYTES(block[1])[3];
+    BYTES(res_block[1])[0] = BYTES(block[0])[0];
+    BYTES(res_block[1])[1] = BYTES(block[3])[1];
+    BYTES(res_block[1])[2] = BYTES(block[2])[2];
+    BYTES(res_block[1])[3] = BYTES(block[1])[3];
 
-  BYTES(res_block[3])[0] = BYTES(block[3])[0];
-  BYTES(res_block[3])[1] = BYTES(block[0])[1];
-  BYTES(res_block[3])[2] = BYTES(block[1])[2];
-  BYTES(res_block[3])[3] = BYTES(block[2])[3];
+    BYTES(res_block[2])[0] = BYTES(block[1])[0];
+    BYTES(res_block[2])[1] = BYTES(block[0])[1];
+    BYTES(res_block[2])[2] = BYTES(block[3])[2];
+    BYTES(res_block[2])[3] = BYTES(block[2])[3];
+
+    BYTES(res_block[3])[0] = BYTES(block[2])[0];
+    BYTES(res_block[3])[1] = BYTES(block[1])[1];
+    BYTES(res_block[3])[2] = BYTES(block[0])[2];
+    BYTES(res_block[3])[3] = BYTES(block[3])[3];
+
+
 }
 
 
@@ -212,21 +215,21 @@ void aes_encipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
   addroundkey(round_keys[0], block);
 
-printf("first add round key: %x %x %x %x\n", 0, block[0], block[1], block[2], block[3]);
+printf("first add round key: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
 
     subbytes(block);
-    printf("subbytes: %x %x %x %x\n", i, block[0], block[1], block[2], block[3]);
+    printf("subbytes: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
     shiftrows(block, tmp_block);
-    printf("shiftrows: %x %x %x %x\n", i, block[0], block[1], block[2], block[3]);
+    printf("shiftrows: %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
     mixcolumns(tmp_block);
-    printf("mixcolums: %x %x %x %x\n", i, block[0], block[1], block[2], block[3]);
+    printf("mixcolums: %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
-    addroundkey(round_keys[i], tmp_block);
+    addroundkey(round_keys[1], tmp_block);
 
-    printf("addround key: %x %x %x %x\n", i, block[0], block[1], block[2], block[3]);
+    printf("addround key: %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
 }
 
@@ -240,10 +243,10 @@ printf("first add round key: %x %x %x %x\n", 0, block[0], block[1], block[2], bl
 unsigned int inv_mixw(unsigned int w) {
   unsigned int res;
 
-  BYTES(res)[0] = GM14(BYTES(w)[0]) ^ GM11(BYTES(w)[1]) ^ GM13(BYTES(w)[2]) ^ GM9(BYTES(w)[3]);
-  BYTES(res)[1] = GM9(BYTES(w)[0])  ^ GM14(BYTES(w)[1]) ^ GM11(BYTES(w)[2]) ^ GM13(BYTES(w)[3]);
-  BYTES(res)[2] = GM13(BYTES(w)[0]) ^ GM9(BYTES(w)[1])  ^ GM14(BYTES(w)[2]) ^ GM11(BYTES(w)[3]);
-  BYTES(res)[3] = GM11(BYTES(w)[0]) ^ GM13(BYTES(w)[1]) ^ GM9(BYTES(w)[2])  ^ GM14(BYTES(w)[3]);
+  BYTES(res)[2] = GM14(BYTES(w)[3]) ^ GM11(BYTES(w)[2]) ^ GM13(BYTES(w)[1]) ^ GM9(BYTES(w)[0]);
+  BYTES(res)[1] = GM9(BYTES(w)[3])  ^ GM14(BYTES(w)[2]) ^ GM11(BYTES(w)[1]) ^ GM13(BYTES(w)[0]);
+  BYTES(res)[0] = GM13(BYTES(w)[3]) ^ GM9(BYTES(w)[2])  ^ GM14(BYTES(w)[1]) ^ GM11(BYTES(w)[0]);
+  BYTES(res)[3] = GM11(BYTES(w)[3]) ^ GM13(BYTES(w)[2]) ^ GM9(BYTES(w)[1])  ^ GM14(BYTES(w)[0]);
 
   return res;
 }
@@ -274,25 +277,29 @@ void inv_subbytes(unsigned int * block) {
 * Perform AES ShiftRows on the given block
 */
 void inv_shiftrows(unsigned int * block, unsigned int * res_block) {
-  BYTES(res_block[0])[0] = BYTES(block[0])[0];
-  BYTES(res_block[0])[1] = BYTES(block[3])[1];
-  BYTES(res_block[0])[2] = BYTES(block[2])[2];
-  BYTES(res_block[0])[3] = BYTES(block[1])[3];
 
-  BYTES(res_block[1])[0] = BYTES(block[1])[0];
-  BYTES(res_block[1])[1] = BYTES(block[0])[1];
-  BYTES(res_block[1])[2] = BYTES(block[3])[2];
-  BYTES(res_block[1])[3] = BYTES(block[2])[3];
+  BYTES(res_block[0])[0] = BYTES(block[1])[0];
+  BYTES(res_block[0])[1] = BYTES(block[2])[1];
+  BYTES(res_block[0])[2] = BYTES(block[3])[2];
+  BYTES(res_block[0])[3] = BYTES(block[0])[3];
 
-  BYTES(res_block[2])[0] = BYTES(block[2])[0];
-  BYTES(res_block[2])[1] = BYTES(block[1])[1];
-  BYTES(res_block[2])[2] = BYTES(block[0])[2];
-  BYTES(res_block[2])[3] = BYTES(block[3])[3];
+  BYTES(res_block[1])[0] = BYTES(block[2])[0];
+  BYTES(res_block[1])[1] = BYTES(block[3])[1];
+  BYTES(res_block[1])[2] = BYTES(block[0])[2];
+  BYTES(res_block[1])[3] = BYTES(block[1])[3];
 
-  BYTES(res_block[3])[0] = BYTES(block[3])[0];
-  BYTES(res_block[3])[1] = BYTES(block[2])[1];
-  BYTES(res_block[3])[2] = BYTES(block[1])[2];
-  BYTES(res_block[3])[3] = BYTES(block[0])[3];
+  BYTES(res_block[2])[0] = BYTES(block[3])[0];
+  BYTES(res_block[2])[1] = BYTES(block[0])[1];
+  BYTES(res_block[2])[2] = BYTES(block[1])[2];
+  BYTES(res_block[2])[3] = BYTES(block[2])[3];
+
+  BYTES(res_block[3])[0] = BYTES(block[0])[0];
+  BYTES(res_block[3])[1] = BYTES(block[1])[1];
+  BYTES(res_block[3])[2] = BYTES(block[2])[2];
+  BYTES(res_block[3])[3] = BYTES(block[3])[3];
+
+
+
 }
 
 
@@ -305,7 +312,7 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   if (key_len == AES_128) {
     key_gen128(key, round_keys);
     round_loops = AES_128_ROUNDS - 1;
-    round_keys_num= AES_128_ROUNDS + 1 ;
+    round_keys_num= AES_128_ROUNDS ;
   }
   else if (key_len == AES_256) {
     key_gen256(key, round_keys);
@@ -315,45 +322,35 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
 
   // First round
-  addroundkey(round_keys[round_keys_num], block);
+  addroundkey(round_keys[round_keys_num], tmp_block);
+  printf(" first ADR:\n %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
+
   inv_shiftrows(tmp_block, block);
-  inv_subbytes(tmp_block);
+  printf("SR:\n %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+
+  inv_subbytes(block);
 
   round_keys_num = round_keys_num - 1;
 
-  // printf("Round[%i]: %x %x %x %x\n", 0, block[0], block[1], block[2], block[3]);
+   printf("SB:\n %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
-  for (unsigned char i = 1; i < round_loops; i+=2) {
 
-    addroundkey(round_keys[round_keys_num],tmp_block);
-    inv_mixcolumns(tmp_block);
-    inv_shiftrows(tmp_block,block);
-    inv_subbytes(block);
+    addroundkey(round_keys[round_keys_num],block);
+    printf("ADR:\n %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
-  // printf("Round[%i]: %x %x %x %x\n", i, block[0], block[1], block[2], block[3]);
-
-    addroundkey(round_keys[round_keys_num - 1],block);
     inv_mixcolumns(block);
+    printf("MIXC:\n %x %x %x %x\n", block[0], block[1], block[2],block[3]);
+
     inv_shiftrows(block,tmp_block);
+    printf("SR:\n %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
+
     inv_subbytes(tmp_block);
+    printf(" SB:\n %x %x %x %x\n", tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
-    // printf("Round[%i]: %x %x %x %x\n", i+1, block[0], block[1], block[2], block[3]);
-
-    round_keys_num = round_keys_num - 2;
   }
 
-  addroundkey(round_keys[round_keys_num],tmp_block);
-  inv_mixcolumns(tmp_block);
-  inv_shiftrows(tmp_block,block);
-  inv_subbytes(block);
 
-  // printf("Round[%i]: %x %x %x %x\n", round_loops, block[0], block[1], block[2], block[3]);
 
-  //Last round
-  addroundkey(round_keys[0], block);
-
-  // printf("Round[%i]: %x %x %x %x\n", round_loops+1, block[0], block[1], block[2], block[3]);
-}
 
 
 //-----------------------------------------------------------------------------------------------------
@@ -368,17 +365,17 @@ int main() {
   unsigned int block[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 }; // warning: not initialized, contains stack garbage
 
 
-  printf("Block contents: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  printf("Block contents:\n %x, %x, %x, %x\n", block[0], block[1], block[2], block[3]);
 
   aes_encipher_block(AES_128, key128, block);
-  printf("AES-128 enc result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  //printf("AES-128 enc result:\n %x, %x, %x, %x\n", block[0], block[1], block[2], block[3]);
 
 
-  //aes_decipher_block(AES_128, key128, block);
-  //printf("AES-128 dec result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  aes_decipher_block(AES_128, key128, block);
+  //printf("AES-128 dec result:\n %x, %x, %x, %x\n", block[0], block[1], block[2], block[3]);
 
-  aes_encipher_block(AES_256, key256, block);
-  printf("AES-256 enc result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
+  //aes_encipher_block(AES_256, key256, block);
+  //printf("AES-256 enc result: %x %x %x %x\n", block[0], block[1], block[2], block[3]);
 
 
   //aes_decipher_block(AES_256, key256, block);

@@ -138,10 +138,10 @@ void addroundkey(unsigned int * key, unsigned int * block) {
 unsigned int mixw(unsigned int w) {
   unsigned int res;
 
-  BYTES(res)[0] = GM2(BYTES(w)[0]) ^ GM3(BYTES(w)[1]) ^ BYTES(w)[2]      ^ BYTES(w)[3];
-  BYTES(res)[1] = BYTES(w)[0]      ^ GM2(BYTES(w)[1]) ^ GM3(BYTES(w)[2]) ^ BYTES(w)[3];
-  BYTES(res)[2] = BYTES(w)[0]      ^ BYTES(w)[1]      ^ GM2(BYTES(w)[2]) ^ GM3(BYTES(w)[3]);
-  BYTES(res)[3] = GM3(BYTES(w)[0]) ^ BYTES(w)[1]      ^ BYTES(w)[2]      ^ GM2(BYTES(w)[3]);
+  BYTES(res)[3] = GM2(BYTES(w)[3]) ^ GM3(BYTES(w)[2]) ^ BYTES(w)[1]      ^ BYTES(w)[0];
+  BYTES(res)[2] = BYTES(w)[3]      ^ GM2(BYTES(w)[2]) ^ GM3(BYTES(w)[1]) ^ BYTES(w)[0];
+  BYTES(res)[1] = BYTES(w)[3]      ^ BYTES(w)[2]      ^ GM2(BYTES(w)[1]) ^ GM3(BYTES(w)[0]);
+  BYTES(res)[0] = GM3(BYTES(w)[3]) ^ BYTES(w)[2]      ^ BYTES(w)[1]      ^ GM2(BYTES(w)[0]);
 
   return res;
 }
@@ -172,25 +172,25 @@ void subbytes(unsigned int * block) {
 * Perform AES ShiftRows on the given block
 */
 void shiftrows(unsigned int * block, unsigned int * res_block) {
-  BYTES(res_block[0])[0] = BYTES(block[0])[0];
-  BYTES(res_block[0])[1] = BYTES(block[1])[1];
-  BYTES(res_block[0])[2] = BYTES(block[2])[2];
-  BYTES(res_block[0])[3] = BYTES(block[3])[3];
+    BYTES(res_block[0])[0] = BYTES(block[3])[0];
+    BYTES(res_block[0])[1] = BYTES(block[2])[1];
+    BYTES(res_block[0])[2] = BYTES(block[1])[2];
+    BYTES(res_block[0])[3] = BYTES(block[0])[3];
 
-  BYTES(res_block[1])[0] = BYTES(block[1])[0];
-  BYTES(res_block[1])[1] = BYTES(block[2])[1];
-  BYTES(res_block[1])[2] = BYTES(block[3])[2];
-  BYTES(res_block[1])[3] = BYTES(block[0])[3];
+    BYTES(res_block[1])[0] = BYTES(block[0])[0];
+    BYTES(res_block[1])[1] = BYTES(block[3])[1];
+    BYTES(res_block[1])[2] = BYTES(block[2])[2];
+    BYTES(res_block[1])[3] = BYTES(block[1])[3];
 
-  BYTES(res_block[2])[0] = BYTES(block[2])[0];
-  BYTES(res_block[2])[1] = BYTES(block[3])[1];
-  BYTES(res_block[2])[2] = BYTES(block[0])[2];
-  BYTES(res_block[2])[3] = BYTES(block[1])[3];
+    BYTES(res_block[2])[0] = BYTES(block[1])[0];
+    BYTES(res_block[2])[1] = BYTES(block[0])[1];
+    BYTES(res_block[2])[2] = BYTES(block[3])[2];
+    BYTES(res_block[2])[3] = BYTES(block[2])[3];
 
-  BYTES(res_block[3])[0] = BYTES(block[3])[0];
-  BYTES(res_block[3])[1] = BYTES(block[0])[1];
-  BYTES(res_block[3])[2] = BYTES(block[1])[2];
-  BYTES(res_block[3])[3] = BYTES(block[2])[3];
+    BYTES(res_block[3])[0] = BYTES(block[2])[0];
+    BYTES(res_block[3])[1] = BYTES(block[1])[1];
+    BYTES(res_block[3])[2] = BYTES(block[0])[2];
+    BYTES(res_block[3])[3] = BYTES(block[3])[3];
 }
 
 
@@ -319,7 +319,7 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   if (key_len == AES_128) {
     key_gen128(key, round_keys);
     round_loops = AES_128_ROUNDS - 1;
-    round_keys_num= AES_128_ROUNDS + 1 ;
+    round_keys_num= AES_128_ROUNDS + 1 ; //rimuovere +1 ?
   }
   else if (key_len == AES_256) {
     key_gen256(key, round_keys);
