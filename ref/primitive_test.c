@@ -317,7 +317,7 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   else if (key_len == AES_256) {
     key_gen256(key, round_keys);
     round_loops = AES_256_ROUNDS - 1;
-    round_keys_num= AES_256_ROUNDS + 1;
+    round_keys_num= AES_256_ROUNDS;
   }
 
 
