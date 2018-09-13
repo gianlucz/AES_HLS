@@ -363,6 +363,25 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   // printf("Round[%i]: %x %x %x %x\n", round_loops+1, block[0], block[1], block[2], block[3]);
 }
 
+
+//----------------------------------------------------------------------------
+
+void ecb_encrypt(int key_len, unsigned int * key, unsigned int * block, ){
+
+  while (block != NULL){
+    aes_encipher_block(AES_128, key128, block);
+  }
+
+}
+
+void ecb_decrypt(int key_len, unsigned int * key, unsigned int * block, ){
+
+  while (block != NULL){
+    aes_decipher_block(AES_128, key128, block);
+  }
+  
+}
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
