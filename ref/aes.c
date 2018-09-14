@@ -58,29 +58,29 @@ void key_gen256(unsigned int * key, unsigned int round_keys[15][4]) {
   round_keys[0][2] = key[2];
   round_keys[0][3] = key[3];
 
-  // printf("Key[%i]: %x %x %x %x\n", 0, round_keys[0][0], round_keys[0][1], round_keys[0][2], round_keys[0][3]);
+  // printf("Key[%i]: %08x %08x %08x %08x\n", 0, round_keys[0][0], round_keys[0][1], round_keys[0][2], round_keys[0][3]);
 
   round_keys[1][0] = key[4];
   round_keys[1][1] = key[5];
   round_keys[1][2] = key[6];
   round_keys[1][3] = key[7];
 
-  // printf("Key[%i]: %x %x %x %x\n", 1, round_keys[1][0], round_keys[1][1], round_keys[1][2], round_keys[1][3]);
+  // printf("Key[%i]: %08x %08x %08x %08x\n", 1, round_keys[1][0], round_keys[1][1], round_keys[1][2], round_keys[1][3]);
 
   for (unsigned char i = 0, j = 1; i < AES_256_ROUNDS-2; i+=2, j++) {
     next_256bit_key_a(round_keys[i], round_keys[i+1][3], get_rcon(j), round_keys[i+2]);
 
-    // printf("Key[%i]: %x %x %x %x\n", i+2, round_keys[i+2][0], round_keys[i+2][1], round_keys[i+2][2], round_keys[i+2][3]);
+    // printf("Key[%i]: %08x %08x %08x %08x\n", i+2, round_keys[i+2][0], round_keys[i+2][1], round_keys[i+2][2], round_keys[i+2][3]);
 
     next_256bit_key_b(round_keys[i+1], round_keys[i+2][3], round_keys[i+3]);
 
-    // printf("Key[%i]: %x %x %x %x\n", i+3, round_keys[i+3][0], round_keys[i+3][1], round_keys[i+3][2], round_keys[i+3][3]);
+    // printf("Key[%i]: %08x %08x %08x %08x\n", i+3, round_keys[i+3][0], round_keys[i+3][1], round_keys[i+3][2], round_keys[i+3][3]);
   }
 
   //last key to be generated
   next_256bit_key_a(round_keys[12], round_keys[13][3], get_rcon(7), round_keys[14]);
 
-  // printf("Key[%i]: %x %x %x %x\n", 14, round_keys[14][0], round_keys[14][1], round_keys[14][2], round_keys[14][3]);
+  // printf("Key[%i]: %08x %08x %08x %08x\n", 14, round_keys[14][0], round_keys[14][1], round_keys[14][2], round_keys[14][3]);
 }
 
 /*
@@ -111,12 +111,12 @@ void key_gen128(unsigned int * key, unsigned int round_keys[15][4]) {
   round_keys[0][2] = key[2];
   round_keys[0][3] = key[3];
 
-  // printf("Key[%i]: %x %x %x %x\n", 0, round_keys[0][0], round_keys[0][1], round_keys[0][2], round_keys[0][3]);
+  // printf("Key[%i]: %08x %08x %08x %08x\n", 0, round_keys[0][0], round_keys[0][1], round_keys[0][2], round_keys[0][3]);
 
   for (unsigned char i = 0; i < AES_128_ROUNDS; i++) {
     next_128bit_key(round_keys[i], get_rcon(i+1), round_keys[i+1]);
 
-    // printf("Key[%i]: %x %x %x %x\n", i+1, round_keys[i+1][0], round_keys[i+1][1], round_keys[i+1][2], round_keys[i+1][3]);
+    // printf("Key[%i]: %08x %08x %08x %08x\n", i+1, round_keys[i+1][0], round_keys[i+1][1], round_keys[i+1][2], round_keys[i+1][3]);
   }
 }
 
@@ -210,7 +210,7 @@ void aes_encipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
   addroundkey(round_keys[0], block);
 
-  // printf("Round[%i]: %x %x %x %x\n", 0, block[0], block[1], block[2], block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", 0, block[0], block[1], block[2], block[3]);
 
   for (unsigned char i = 1; i < round_loops; i+=2) {
     subbytes(block);
@@ -218,14 +218,14 @@ void aes_encipher_block(int key_len, unsigned int * key, unsigned int * block) {
     mixcolumns(tmp_block);
     addroundkey(round_keys[i], tmp_block);
 
-    // printf("Round[%i]: %x %x %x %x\n", i, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
+    // printf("Round[%i]: %08x %08x %08x %08x\n", i, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
     subbytes(tmp_block);
     shiftrows(tmp_block, block);
     mixcolumns(block);
     addroundkey(round_keys[i+1], block);
 
-    // printf("Round[%i]: %x %x %x %x\n", i+1, block[0], block[1], block[2], block[3]);
+    // printf("Round[%i]: %08x %08x %08x %08x\n", i+1, block[0], block[1], block[2], block[3]);
   }
 
   subbytes(block);
@@ -233,13 +233,13 @@ void aes_encipher_block(int key_len, unsigned int * key, unsigned int * block) {
   mixcolumns(tmp_block);
   addroundkey(round_keys[round_loops], tmp_block);
 
-  // printf("Round[%i]: %x %x %x %x\n", round_loops, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", round_loops, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
   subbytes(tmp_block);
   shiftrows(tmp_block, block);
   addroundkey(round_keys[round_loops+1], block);
 
-  // printf("Round[%i]: %x %x %x %x\n", round_loops+1, block[0], block[1], block[2], block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", round_loops+1, block[0], block[1], block[2], block[3]);
 }
 
 //------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
 
   round_keys_num = round_keys_num - 1;
-  // printf("Round[%i]: %x %x %x %x\n", 0, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", 0, tmp_block[0], tmp_block[1], tmp_block[2], tmp_block[3]);
 
   for (unsigned char i = 1; i < round_loops; i+=2) {
 
@@ -355,12 +355,12 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
   inv_shiftrows(tmp_block,block);
   inv_subbytes(block);
 
-  // printf("Round[%i]: %x %x %x %x\n", round_loops, block[0], block[1], block[2], block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", round_loops, block[0], block[1], block[2], block[3]);
 
   //Last add key
   addroundkey(round_keys[0], block);
 
-  // printf("Round[%i]: %x %x %x %x\n", round_loops+1, block[0], block[1], block[2], block[3]);
+  // printf("Round[%i]: %08x %08x %08x %08x\n", round_loops+1, block[0], block[1], block[2], block[3]);
 }
 
 
@@ -395,23 +395,23 @@ int main() {
   /**** AES blockcipher tests ****/
   unsigned int block_t1[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 };
 
-  printf("Block contents: %x %x %x %x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
+  printf("Block contents: %08x %08x %08x %08x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
 
   aes_encipher_block(AES_128, key128, block_t1);
-  printf("AES-128 enc result: %x %x %x %x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
+  printf("AES-128 enc result: %08x %08x %08x %08x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
 
 
   aes_decipher_block(AES_128, key128, block_t1);
-  printf("AES-128 dec result: %x %x %x %x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
+  printf("AES-128 dec result: %08x %08x %08x %08x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
 
   unsigned int block_t2[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 };
 
   aes_encipher_block(AES_256, key256, block_t2);
-  printf("AES-256 enc result: %x %x %x %x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
+  printf("AES-256 enc result: %08x %08x %08x %08x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
 
 
   aes_decipher_block(AES_256, key256, block_t2);
-  printf("AES-256 dec result: %x %x %x %x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
+  printf("AES-256 dec result: %08x %08x %08x %08x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
 
   /**** ECB MoP tests ****/
   unsigned int ecb_t1[14] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0,
@@ -421,28 +421,28 @@ int main() {
 
 
   ecb_encrypt(AES_128, key128, ecb_t1, 56);
-  printf("ECB-128 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
-  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
-  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
+  printf("ECB-128 enc result [0]: %08x %08x %08x %08x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %08x %08x %08x %08x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %08x %08x %08x %08x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
 
   ecb_decrypt(AES_128, key128, ecb_t1, 56);
-  printf("ECB-128 dec result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
-  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
-  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
+  printf("ECB-128 dec result [0]: %08x %08x %08x %08x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %08x %08x %08x %08x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %08x %08x %08x %08x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
 
 
   ecb_encrypt(AES_256, key256, ecb_t1, 56);
-  printf("ECB-256 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
-  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
-  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
+  printf("ECB-256 enc result [0]: %08x %08x %08x %08x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %08x %08x %08x %08x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %08x %08x %08x %08x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
 
   ecb_decrypt(AES_256, key256, ecb_t1, 56);
-  printf("ECB-256 dec result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
-  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
-  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
+  printf("ECB-256 dec result [0]: %08x %08x %08x %08x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %08x %08x %08x %08x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %08x %08x %08x %08x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
   return 0;
 }
