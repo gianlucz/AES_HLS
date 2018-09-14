@@ -370,8 +370,8 @@ void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int lenght) {
   unsigned int * words = (unsigned int *) buffer;
   unsigned int i;
   for(i = 0; i < lenght / 16; i++) {
-    // printf("block: %i, location: %p\n", i, &words[i*16]);
-    aes_encipher_block(key_len, key, &words[i * 16]);
+    // printf("block: %i, location: %p\n", i, &words[i*4]);
+    aes_encipher_block(key_len, key, &words[i * 4]);
   }
 }
 
@@ -379,8 +379,8 @@ void ecb_decrypt(int key_len, unsigned int * key, void * buffer, int lenght ) {
   unsigned int * words = (unsigned int *) buffer;
   unsigned int i;
   for(i = 0; i < lenght / 16; i++) {
-    // printf("block: %i, location: %p\n", i, &words[i*16]);
-    aes_decipher_block(key_len, key, &words[i * 16]);
+    // printf("block: %i, location: %p\n", i, &words[i*4]);
+    aes_decipher_block(key_len, key, &words[i * 4]);
   }
 }
 
@@ -440,7 +440,7 @@ int main() {
 
 
   ecb_decrypt(AES_256, key256, ecb_t1, 56);
-  printf("ECB-256 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("ECB-256 dec result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
   printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
   printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
