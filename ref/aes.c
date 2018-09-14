@@ -366,22 +366,21 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
 //----------------------------------------------------------------------------
 
-void ecb_encrypt(int key_len, unsigned int * key, unsigned int * block, int lenght){
-
-  while (lenght >= 128){
-    aes_encipher_block(key_len, key, block);
-    lenght -= 128; //set remaining bits
-    block += 4; //increment block pointer
+void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int lenght) {
+  unsigned int * words = (unsigned int *) buffer;
+  unsigned int i;
+  for(i = 0; i < lenght / 16; i++) {
+    // printf("block: %i, location: %p\n", i, &words[i*16]);
+    aes_encipher_block(key_len, key, &words[i * 16]);
   }
 }
 
-void ecb_decrypt(int key_len, unsigned int * key, unsigned int * block, int lenght ){
-
-  while (lenght >= 128){
-    aes_decipher_block(key_len, key, block);
-    lenght -= 128; //set remaining bits
-    block += 4; //increment block pointer
-
+void ecb_decrypt(int key_len, unsigned int * key, void * buffer, int lenght ) {
+  unsigned int * words = (unsigned int *) buffer;
+  unsigned int i;
+  for(i = 0; i < lenght / 16; i++) {
+    // printf("block: %i, location: %p\n", i, &words[i*16]);
+    aes_decipher_block(key_len, key, &words[i * 16]);
   }
 }
 
@@ -393,7 +392,8 @@ int main() {
   unsigned int key256[8] = { 0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781,
                              0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4 };
 
-  unsigned int block_t1[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 }; // warning: not initialized, contains stack garbage
+  /**** AES blockcipher tests ****/
+  unsigned int block_t1[4] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 };
 
   printf("Block contents: %x %x %x %x\n", block_t1[0], block_t1[1], block_t1[2], block_t1[3]);
 
@@ -411,38 +411,38 @@ int main() {
 
 
   aes_decipher_block(AES_256, key256, block_t2);
- printf("AES-256 dec result: %x %x %x %x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
+  printf("AES-256 dec result: %x %x %x %x\n", block_t2[0], block_t2[1], block_t2[2], block_t2[3]);
 
-/**** ECB ****/
-
- unsigned int block_t4[12] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0,
-      0x87654321, 0x0fedcab9, 0x87654321, 0x0fedcab9,
-      0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0 };
-
-
- ecb_encrypt(AES_128, key128, block_t4, 256);
- printf("ECB-128 enc result: %x %x %x %x\n", block_t4[0], block_t4[1], block_t4[2], block_t4[3]);
- printf("ECB-128 enc result: %x %x %x %x\n", block_t4[4], block_t4[5], block_t4[6], block_t4[7]);
- printf("ECB-128 enc result: %x %x %x %x\n", block_t4[9], block_t4[10], block_t4[11], block_t4[12]);
+  /**** ECB MoP tests ****/
+  unsigned int ecb_t1[14] = { 0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0,
+                              0x87654321, 0x0fedcab9, 0x87654321, 0x0fedcab9,
+                              0x12345678, 0x9abcdef0, 0x12345678, 0x9abcdef0,
+                              0x87654321, 0x0fedcab9 };
 
 
-  ecb_decrypt(AES_128, key128, block_t4, 256);
-  printf("ECB-128 dec result: %x %x %x %x\n", block_t4[0], block_t4[1], block_t4[2], block_t4[3]);
-  printf("ECB-128 dec result: %x %x %x %x\n", block_t4[4], block_t4[5], block_t4[6], block_t4[7]);
-  printf("ECB-128 dec result: %x %x %x %x\n", block_t4[9], block_t4[10], block_t4[11], block_t4[12]);
+  ecb_encrypt(AES_128, key128, ecb_t1, 56);
+  printf("ECB-128 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
+
+
+  ecb_decrypt(AES_128, key128, ecb_t1, 56);
+  printf("ECB-128 dec result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
 
 
- ecb_encrypt(AES_256, key256, block_t4, 256);
- printf("ECB-256 enc result: %x %x %x %x\n", block_t4[0], block_t4[1], block_t4[2], block_t4[3]);
- printf("ECB-256 enc result: %x %x %x %x\n", block_t4[4], block_t4[5], block_t4[6], block_t4[7]);
- printf("ECB-256 enc result: %x %x %x %x\n", block_t4[9], block_t4[10], block_t4[11], block_t4[12]);
+  ecb_encrypt(AES_256, key256, ecb_t1, 56);
+  printf("ECB-256 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
 
-  ecb_decrypt(AES_256, key256, block_t4, 256);
-  printf("ECB-256 dec result: %x %x %x %x\n", block_t4[0], block_t4[1], block_t4[2], block_t4[3]);
-  printf("ECB-256 dec result: %x %x %x %x\n", block_t4[4], block_t4[5], block_t4[6], block_t4[7]);
-  printf("ECB-256 dec result: %x %x %x %x\n", block_t4[9], block_t4[10], block_t4[11], block_t4[12]);
+  ecb_decrypt(AES_256, key256, ecb_t1, 56);
+  printf("ECB-256 enc result [0]: %x %x %x %x\n", ecb_t1[0], ecb_t1[1], ecb_t1[2], ecb_t1[3]);
+  printf("                   [1]: %x %x %x %x\n", ecb_t1[4], ecb_t1[5], ecb_t1[6], ecb_t1[7]);
+  printf("                   [2]: %x %x %x %x\n", ecb_t1[9], ecb_t1[10], ecb_t1[11], ecb_t1[12]);
 
   return 0;
 }
