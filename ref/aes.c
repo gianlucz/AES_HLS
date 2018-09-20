@@ -366,19 +366,19 @@ void aes_decipher_block(int key_len, unsigned int * key, unsigned int * block) {
 
 //----------------------------------------------------------------------------
 
-void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int lenght) {
+void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int length) {
   unsigned int * words = (unsigned int *) buffer;
   unsigned int i;
-  for(i = 0; i < lenght / 16; i++) {
+  for(i = 0; i < length / 16; i++) {
     // printf("block: %i, location: %p\n", i, &words[i*4]);
     aes_encipher_block(key_len, key, &words[i * 4]);
   }
 }
 
-void ecb_decrypt(int key_len, unsigned int * key, void * buffer, int lenght ) {
+void ecb_decrypt(int key_len, unsigned int * key, void * buffer, int length ) {
   unsigned int * words = (unsigned int *) buffer;
   unsigned int i;
-  for(i = 0; i < lenght / 16; i++) {
+  for(i = 0; i < length / 16; i++) {
     // printf("block: %i, location: %p\n", i, &words[i*4]);
     aes_decipher_block(key_len, key, &words[i * 4]);
   }
