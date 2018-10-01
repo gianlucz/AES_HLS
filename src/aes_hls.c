@@ -162,17 +162,17 @@ void subbytes(aes_block_t * block) {
   BYTES(block->w0)[1] = EncSbox[ BYTES(block->w0)[1] ];
   BYTES(block->w0)[2] = EncSbox[ BYTES(block->w0)[2] ];
   BYTES(block->w0)[3] = EncSbox[ BYTES(block->w0)[3] ];
-  
+
   BYTES(block->w1)[0] = EncSbox[ BYTES(block->w1)[0] ];
   BYTES(block->w1)[1] = EncSbox[ BYTES(block->w1)[1] ];
   BYTES(block->w1)[2] = EncSbox[ BYTES(block->w1)[2] ];
   BYTES(block->w1)[3] = EncSbox[ BYTES(block->w1)[3] ];
-  
+
   BYTES(block->w2)[0] = EncSbox[ BYTES(block->w2)[0] ];
   BYTES(block->w2)[1] = EncSbox[ BYTES(block->w2)[1] ];
   BYTES(block->w2)[2] = EncSbox[ BYTES(block->w2)[2] ];
   BYTES(block->w2)[3] = EncSbox[ BYTES(block->w2)[3] ];
-  
+
   BYTES(block->w3)[0] = EncSbox[ BYTES(block->w3)[0] ];
   BYTES(block->w3)[1] = EncSbox[ BYTES(block->w3)[1] ];
   BYTES(block->w3)[2] = EncSbox[ BYTES(block->w3)[2] ];
@@ -289,7 +289,7 @@ void inv_subbytes(aes_block_t * block) {
     BYTES(block->w0)[1] = DecSbox[ BYTES(block->w0)[1] ];
     BYTES(block->w0)[2] = DecSbox[ BYTES(block->w0)[2] ];
     BYTES(block->w0)[3] = DecSbox[ BYTES(block->w0)[3] ];
-    
+
     BYTES(block->w1)[0] = DecSbox[ BYTES(block->w1)[0] ];
     BYTES(block->w1)[1] = DecSbox[ BYTES(block->w1)[1] ];
     BYTES(block->w1)[2] = DecSbox[ BYTES(block->w1)[2] ];
@@ -299,7 +299,7 @@ void inv_subbytes(aes_block_t * block) {
     BYTES(block->w2)[1] = DecSbox[ BYTES(block->w2)[1] ];
     BYTES(block->w2)[2] = DecSbox[ BYTES(block->w2)[2] ];
     BYTES(block->w2)[3] = DecSbox[ BYTES(block->w2)[3] ];
-    
+
     BYTES(block->w3)[0] = DecSbox[ BYTES(block->w3)[0] ];
     BYTES(block->w3)[1] = DecSbox[ BYTES(block->w3)[1] ];
     BYTES(block->w3)[2] = DecSbox[ BYTES(block->w3)[2] ];
@@ -392,8 +392,8 @@ void aes_decipher_block(int key_len, unsigned int key[8], aes_block_t * block) {
 
 //----------------------------------------------------------------------------
 
-void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int length) {
-  aes_block_t * blocks = (aes_block_t *) buffer;
+void ecb_encrypt(int key_len, unsigned int key[8], aes_block_t buffer[3], int length) {
+  aes_block_t * blocks = &buffer[0];
 
   for(unsigned int i = 0; i < length / 16; i++) {
       // printf("block: %i, location: %p\n", i, &blocks[i]);
@@ -402,8 +402,8 @@ void ecb_encrypt(int key_len, unsigned int * key, void * buffer, int length) {
 
 }
 
-void ecb_decrypt(int key_len, unsigned int * key, void * buffer, int length ) {
-  aes_block_t * blocks = (aes_block_t *) buffer;
+void ecb_decrypt(int key_len, unsigned int key[8], aes_block_t buffer[3], int length ) {
+  aes_block_t * blocks =&buffer[0];
 
   for(unsigned int i = 0; i < length / 16; i++) {
     // printf("block: %i, location: %p\n", i, &blocks[i]);

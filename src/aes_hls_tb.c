@@ -1,4 +1,4 @@
-void TEST_ecb_aes(int key_len, unsigned int * key, void * buffer, int length ){
+void TEST_ecb_aes(int key_len, unsigned int * key, aes_block_t buffer[3], int length ){
   ecb_encrypt(key_len, key, buffer, length);
   ecb_decrypt(key_len, key, buffer, length);
 }
